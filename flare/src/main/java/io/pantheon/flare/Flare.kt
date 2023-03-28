@@ -9,7 +9,7 @@ class Flare {
         }
 
         fun build() {
-
+            generateEventPropertyMappings()
         }
     }
 
