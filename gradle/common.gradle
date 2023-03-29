@@ -1,0 +1,13 @@
+def applySpotless() {
+    var spotlessTask = tasks.getByName("spotlessApply")
+    ["build", "assemble"].forEach(taskName -> {
+        var task = tasks.findByName(taskName)
+        if (task != null) {
+            spotlessTask.dependsOn(task)
+        }
+    })
+}
+
+ext {
+    configureSpotless = this.applySpotless()
+}

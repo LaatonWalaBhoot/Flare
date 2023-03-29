@@ -3,6 +3,8 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+apply from: "$rootDir/gradle/common.gradle"
+
 android {
     compileSdk 32
 
@@ -27,6 +29,8 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    configureSpotless
 }
 
 dependencies {

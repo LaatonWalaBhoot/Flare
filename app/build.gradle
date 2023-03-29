@@ -3,6 +3,8 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+apply from: "$rootDir/gradle/common.gradle"
+
 android {
     compileSdk 32
 
@@ -29,6 +31,8 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    configureSpotless
 }
 
 dependencies {
@@ -41,3 +45,4 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
 }
+

@@ -1,10 +1,37 @@
+import java.nio.file.Files
+import java.nio.file.Paths
+
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
     id 'com.android.application' version '7.2.2' apply false
     id 'com.android.library' version '7.2.2' apply false
     id 'org.jetbrains.kotlin.android' version '1.8.0' apply false
+    id 'com.diffplug.spotless' version '6.17.0' apply false
+}
+
+subprojects {
+    plugins.apply("com.diffplug.spotless")
+
+    spotless {
+        kotlin {
+            target("**/*.kt")
+            targetExclude("$buildDir/**/*.kt")
+            targetExclude("bin/**/*.kt")
+            ktlint()
+            licenseHeaderFile(rootProject.file("spotless/copyright.kt"))
+        }
+    }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+def setupPreCommitHooks() {
+    var file = new File("$rootDir/.git/hooks/pre-commit")
+    if (!file.exists()) {
+        Files.copy(Paths.get("$rootDir/gradle/pre-commit"), Paths.get("$rootDir/.git/hooks/pre-commit"))
+    }
+}
+
+setupPreCommitHooks()
