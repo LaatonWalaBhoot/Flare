@@ -13,13 +13,3 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.pantheon.flare
-
-import com.clevertap.android.sdk.CleverTapAPI
-
-class CleverTapAnalyticsAdapter : AnalyticsAdapter<CleverTapAPI>() {
-
-    override fun initialize(block: CleverTapAPI?.() -> Unit) {
-        block(CleverTapAPI.getDefaultInstance(null))
-    }
-}
