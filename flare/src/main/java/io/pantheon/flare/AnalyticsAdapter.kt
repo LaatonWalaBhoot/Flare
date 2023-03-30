@@ -17,5 +17,7 @@ package io.pantheon.flare
 
 abstract class AnalyticsAdapter<T> {
 
-    abstract fun initialize(block: T?.() -> Unit)
+    abstract fun initialize(block: T?.() -> Unit): AnalyticsAdapter<T>
+
+    abstract fun logEvent(eventName: String, eventMap: HashMap<String?, Any?>)
 }
