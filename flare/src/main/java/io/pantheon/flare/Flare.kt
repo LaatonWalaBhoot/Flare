@@ -15,23 +15,31 @@
  */
 package io.pantheon.flare
 
+import AnalyticsPayload
+
 class Flare {
 
     class Builder {
-        fun addAdapter(block: () -> Unit): Builder {
-            block()
+        fun addAdapter(block: () -> AnalyticsAdapter<*>): Builder {
+            ADAPTERS.add(block())
             return this
         }
 
-        fun build() {
-            generateEventPropertyMappings()
+        fun build(props: List<String>) {
+            PROPERTIES.clear()
+            PROPERTIES.addAll(props)
+            generateEventPropertyMappings(PROPERTIES)
         }
     }
 
     companion object {
+        private val ADAPTERS = mutableListOf<AnalyticsAdapter<*>>()
+        private val PROPERTIES = mutableListOf<String>()
 
-        fun builder(): Builder {
-            return Builder()
+        fun trackAll(block: AnalyticsPayload.() -> Unit) {
+            AnalyticsPayload()
+                .apply(block)
+                .also { ADAPTERS.forEach { it.logEvent("", ) } }
         }
     }
 }
