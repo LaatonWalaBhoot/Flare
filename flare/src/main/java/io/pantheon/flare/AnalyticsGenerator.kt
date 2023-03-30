@@ -15,29 +15,25 @@
  */
 package io.pantheon.flare
 
-import com.squareup.kotlinpoet.FileSpec
-import com.squareup.kotlinpoet.FunSpec
-import com.squareup.kotlinpoet.KModifier
-import com.squareup.kotlinpoet.TypeSpec
+import com.squareup.kotlinpoet.*
 import java.io.File
 
-fun generateEventPropertyMappings() {
+fun generateEventPropertyMappings(props: List<String>) {
     // using kotlinpoet here
 
     val typeBuilder = TypeSpec.classBuilder("AnalyticsPayload")
-        .addModifiers(KModifier.DATA)
 
-    val funSpecBuilder = FunSpec.constructorBuilder()
-
-//    constants.forEach {
-//        funSpecBuilder.addParameter(it.snakeToCamelCase(), String::class)
-//        typeBuilder.addProperty(PropertySpec.builder(it.snakeToCamelCase(), String::class)
-//            .initializer(it.snakeToCamelCase())
-//            .build())
-//    }
+    props.forEach {
+        typeBuilder.addProperty(
+            PropertySpec.builder(it.snakeToCamelCase(), Any::class.asTypeName().copy(true))
+                .initializer("null")
+                .mutable(true)
+                .build()
+        )
+    }
 
     FileSpec.builder("", "AnalyticsPayload")
-        .addType(typeBuilder.primaryConstructor(funSpecBuilder.build()).build())
+        .addType(typeBuilder.build())
         .build()
         .writeTo(File("flare/src/main/java/io/pantheon/flare"))
 }
