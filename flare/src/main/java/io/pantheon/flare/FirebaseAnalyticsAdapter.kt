@@ -16,10 +16,17 @@
 package io.pantheon.flare
 
 import com.google.firebase.analytics.FirebaseAnalytics
+import org.json.JSONObject
 
 class FirebaseAnalyticsAdapter : AnalyticsAdapter<FirebaseAnalytics>() {
 
-    override fun initialize(block: FirebaseAnalytics?.() -> Unit) {
-        //            block(FirebaseAnalytics.getInstance(null))
+    override fun initialize(block: FirebaseAnalytics?.() -> Unit): AnalyticsAdapter<FirebaseAnalytics> {
+        block(FirebaseAnalytics.getInstance(null))
+        return this
+    }
+
+    override fun logEvent(eventName: String, eventMap: HashMap<String?, Any?>) {
+        FirebaseAnalytics.getInstance()
+            .logEvent(eventName, BundleJSONConverter.convertToBundle(JSONObject(eventMap)))
     }
 }

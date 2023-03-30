@@ -19,7 +19,12 @@ import com.clevertap.android.sdk.CleverTapAPI
 
 class CleverTapAnalyticsAdapter : AnalyticsAdapter<CleverTapAPI>() {
 
-    override fun initialize(block: CleverTapAPI?.() -> Unit) {
+    override fun initialize(block: CleverTapAPI?.() -> Unit): AnalyticsAdapter<CleverTapAPI> {
         block(CleverTapAPI.getDefaultInstance(null))
+        return this
+    }
+
+    override fun logEvent(eventName: String, eventMap: HashMap<String?, Any?>) {
+        CleverTapAPI.getDefaultInstance(null)?.pushEvent(eventName, eventMap)
     }
 }

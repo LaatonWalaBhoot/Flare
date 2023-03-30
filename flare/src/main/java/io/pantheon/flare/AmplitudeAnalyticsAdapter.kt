@@ -17,13 +17,19 @@ package io.pantheon.flare
 
 import com.amplitude.api.Amplitude
 import com.amplitude.api.AmplitudeClient
+import org.json.JSONObject
 
 class AmplitudeAnalyticsAdapter : AnalyticsAdapter<AmplitudeClient>() {
 
-    override fun initialize(block: AmplitudeClient?.() -> Unit) {
+    override fun initialize(block: AmplitudeClient?.() -> Unit): AnalyticsAdapter<AmplitudeClient> {
         block(
             Amplitude.getInstance()
                 .initialize(null, null, null),
         )
+        return this
+    }
+
+    override fun logEvent(eventName: String, eventMap: HashMap<String?, Any?>) {
+        Amplitude.getInstance().logEvent(eventName, JSONObject(eventMap))
     }
 }
