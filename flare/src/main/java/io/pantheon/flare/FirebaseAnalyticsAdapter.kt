@@ -15,18 +15,24 @@
  */
 package io.pantheon.flare
 
+import android.content.Context
 import com.google.firebase.analytics.FirebaseAnalytics
 import org.json.JSONObject
 
 class FirebaseAnalyticsAdapter : AnalyticsAdapter<FirebaseAnalytics>() {
 
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
+
     override fun initialize(block: FirebaseAnalytics?.() -> Unit): AnalyticsAdapter<FirebaseAnalytics> {
-        block(FirebaseAnalytics.getInstance(null))
+        FlareProvider.flareContext?.let { context: Context ->
+            firebaseAnalytics = FirebaseAnalytics.getInstance(context)
+        }
+        block(firebaseAnalytics)
         return this
     }
 
     override fun logEvent(eventName: String, eventMap: HashMap<String?, Any?>) {
-        FirebaseAnalytics.getInstance()
-            .logEvent(eventName, BundleJSONConverter.convertToBundle(JSONObject(eventMap)))
+        require(::firebaseAnalytics.isInitialized) { Exception("Flare: FirebaseAnalytics not initialized") }
+        firebaseAnalytics.logEvent(eventName, BundleJSONConverter.convertToBundle(JSONObject(eventMap)))
     }
 }

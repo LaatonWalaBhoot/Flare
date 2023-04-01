@@ -15,21 +15,25 @@
  */
 package io.pantheon.flare
 
+import android.content.Context
 import com.amplitude.api.Amplitude
 import com.amplitude.api.AmplitudeClient
 import org.json.JSONObject
 
 class AmplitudeAnalyticsAdapter : AnalyticsAdapter<AmplitudeClient>() {
 
+    private lateinit var amplitudeClient: AmplitudeClient
+
     override fun initialize(block: AmplitudeClient?.() -> Unit): AnalyticsAdapter<AmplitudeClient> {
-        block(
-            Amplitude.getInstance()
-                .initialize(null, null, null),
-        )
+        FlareProvider.flareContext?.let { context: Context ->
+            Amplitude.getInstance().initialize(context, /* todo:API_KEY */ null, /* todo:USER-ID */null).apply { this?.let { client: AmplitudeClient -> amplitudeClient = client } }
+            block(amplitudeClient)
+        }
         return this
     }
 
     override fun logEvent(eventName: String, eventMap: HashMap<String?, Any?>) {
-        Amplitude.getInstance().logEvent(eventName, JSONObject(eventMap))
+        require(::amplitudeClient.isInitialized) { Exception("Flare: AmplitudeClient not initialized") }
+        amplitudeClient.logEvent(eventName, JSONObject(eventMap))
     }
 }

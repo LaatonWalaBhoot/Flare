@@ -15,16 +15,23 @@
  */
 package io.pantheon.flare
 
+import android.content.Context
 import com.clevertap.android.sdk.CleverTapAPI
 
 class CleverTapAnalyticsAdapter : AnalyticsAdapter<CleverTapAPI>() {
 
+    private lateinit var cleverTap: CleverTapAPI
+
     override fun initialize(block: CleverTapAPI?.() -> Unit): AnalyticsAdapter<CleverTapAPI> {
-        block(CleverTapAPI.getDefaultInstance(null))
+        FlareProvider.flareContext?.let { context: Context ->
+            CleverTapAPI.getDefaultInstance(context).apply { this?.let { cleverTapAPI: CleverTapAPI -> cleverTap = cleverTapAPI } }
+            block(cleverTap)
+        }
         return this
     }
 
     override fun logEvent(eventName: String, eventMap: HashMap<String?, Any?>) {
-        CleverTapAPI.getDefaultInstance(null)?.pushEvent(eventName, eventMap)
+        require(::cleverTap.isInitialized) { Exception("Flare: CleverTapAPI not initialized") }
+        cleverTap.pushEvent(eventName, eventMap)
     }
 }
