@@ -18,7 +18,6 @@ package io.pantheon.flare.adapters
 import android.content.Context
 import com.google.firebase.analytics.FirebaseAnalytics
 import io.pantheon.flare.BundleJSONConverter
-import io.pantheon.flare.FlareProvider
 import org.json.JSONObject
 
 class FirebaseAnalyticsAdapter : AnalyticsAdapter<FirebaseAnalytics>() {
@@ -26,7 +25,7 @@ class FirebaseAnalyticsAdapter : AnalyticsAdapter<FirebaseAnalytics>() {
     private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     override fun initialize(block: FirebaseAnalytics?.() -> Unit): AnalyticsAdapter<FirebaseAnalytics> {
-        FlareProvider.flareContext?.let { context: Context ->
+        context?.let { context: Context ->
             firebaseAnalytics = FirebaseAnalytics.getInstance(context)
             block(firebaseAnalytics)
         }

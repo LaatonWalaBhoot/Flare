@@ -17,14 +17,13 @@ package io.pantheon.flare.adapters
 
 import android.content.Context
 import com.clevertap.android.sdk.CleverTapAPI
-import io.pantheon.flare.FlareProvider
 
 class CleverTapAnalyticsAdapter : AnalyticsAdapter<CleverTapAPI>() {
 
     private lateinit var cleverTap: CleverTapAPI
 
     override fun initialize(block: CleverTapAPI?.() -> Unit): AnalyticsAdapter<CleverTapAPI> {
-        FlareProvider.flareContext?.let { context: Context ->
+        context?.let { context: Context ->
             CleverTapAPI.getDefaultInstance(context).apply { this?.let { cleverTapAPI: CleverTapAPI -> cleverTap = cleverTapAPI } }
             block(cleverTap)
         }
