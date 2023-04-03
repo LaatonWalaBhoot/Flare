@@ -13,27 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.pantheon.flare
+package io.pantheon.flare.adapters
 
 import android.content.Context
-import com.amplitude.api.Amplitude
-import com.amplitude.api.AmplitudeClient
-import org.json.JSONObject
+import com.clevertap.android.sdk.CleverTapAPI
+import io.pantheon.flare.FlareProvider
 
-class AmplitudeAnalyticsAdapter : AnalyticsAdapter<AmplitudeClient>() {
+class CleverTapAnalyticsAdapter : AnalyticsAdapter<CleverTapAPI>() {
 
-    private lateinit var amplitudeClient: AmplitudeClient
+    private lateinit var cleverTap: CleverTapAPI
 
-    override fun initialize(block: AmplitudeClient?.() -> Unit): AnalyticsAdapter<AmplitudeClient> {
+    override fun initialize(block: CleverTapAPI?.() -> Unit): AnalyticsAdapter<CleverTapAPI> {
         FlareProvider.flareContext?.let { context: Context ->
-            Amplitude.getInstance().initialize(context, /* todo:API_KEY */ null, /* todo:USER-ID */null).apply { this?.let { client: AmplitudeClient -> amplitudeClient = client } }
-            block(amplitudeClient)
+            CleverTapAPI.getDefaultInstance(context).apply { this?.let { cleverTapAPI: CleverTapAPI -> cleverTap = cleverTapAPI } }
+            block(cleverTap)
         }
         return this
     }
 
     override fun logEvent(eventName: String, eventMap: HashMap<String?, Any?>) {
-        require(::amplitudeClient.isInitialized) { Exception("Flare: AmplitudeClient not initialized") }
-        amplitudeClient.logEvent(eventName, JSONObject(eventMap))
+        require(::cleverTap.isInitialized) { Exception("Flare: CleverTapAPI not initialized") }
+        cleverTap.pushEvent(eventName, eventMap)
     }
 }

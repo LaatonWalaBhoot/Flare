@@ -13,26 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.pantheon.flare
+package io.pantheon.flare.adapters
 
 import android.content.Context
-import com.google.firebase.analytics.FirebaseAnalytics
+import com.amplitude.api.Amplitude
+import com.amplitude.api.AmplitudeClient
+import io.pantheon.flare.FlareProvider
 import org.json.JSONObject
 
-class FirebaseAnalyticsAdapter : AnalyticsAdapter<FirebaseAnalytics>() {
+class AmplitudeAnalyticsAdapter : AnalyticsAdapter<AmplitudeClient>() {
 
-    private lateinit var firebaseAnalytics: FirebaseAnalytics
+    private lateinit var amplitudeClient: AmplitudeClient
 
-    override fun initialize(block: FirebaseAnalytics?.() -> Unit): AnalyticsAdapter<FirebaseAnalytics> {
+    override fun initialize(block: AmplitudeClient?.() -> Unit): AnalyticsAdapter<AmplitudeClient> {
         FlareProvider.flareContext?.let { context: Context ->
-            firebaseAnalytics = FirebaseAnalytics.getInstance(context)
-            block(firebaseAnalytics)
+            Amplitude.getInstance().initialize(context, /* todo:API_KEY */ null, /* todo:USER-ID */null).apply { this?.let { client: AmplitudeClient -> amplitudeClient = client } }
+            block(amplitudeClient)
         }
         return this
     }
 
     override fun logEvent(eventName: String, eventMap: HashMap<String?, Any?>) {
-        require(::firebaseAnalytics.isInitialized) { Exception("Flare: FirebaseAnalytics not initialized") }
-        firebaseAnalytics.logEvent(eventName, BundleJSONConverter.convertToBundle(JSONObject(eventMap)))
+        require(::amplitudeClient.isInitialized) { Exception("Flare: AmplitudeClient not initialized") }
+        amplitudeClient.logEvent(eventName, JSONObject(eventMap))
     }
 }

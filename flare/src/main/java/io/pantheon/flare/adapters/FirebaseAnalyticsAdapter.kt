@@ -13,25 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.pantheon.flare
+package io.pantheon.flare.adapters
 
 import android.content.Context
-import com.clevertap.android.sdk.CleverTapAPI
+import com.google.firebase.analytics.FirebaseAnalytics
+import io.pantheon.flare.BundleJSONConverter
+import io.pantheon.flare.FlareProvider
+import org.json.JSONObject
 
-class CleverTapAnalyticsAdapter : AnalyticsAdapter<CleverTapAPI>() {
+class FirebaseAnalyticsAdapter : AnalyticsAdapter<FirebaseAnalytics>() {
 
-    private lateinit var cleverTap: CleverTapAPI
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
-    override fun initialize(block: CleverTapAPI?.() -> Unit): AnalyticsAdapter<CleverTapAPI> {
+    override fun initialize(block: FirebaseAnalytics?.() -> Unit): AnalyticsAdapter<FirebaseAnalytics> {
         FlareProvider.flareContext?.let { context: Context ->
-            CleverTapAPI.getDefaultInstance(context).apply { this?.let { cleverTapAPI: CleverTapAPI -> cleverTap = cleverTapAPI } }
-            block(cleverTap)
+            firebaseAnalytics = FirebaseAnalytics.getInstance(context)
+            block(firebaseAnalytics)
         }
         return this
     }
 
     override fun logEvent(eventName: String, eventMap: HashMap<String?, Any?>) {
-        require(::cleverTap.isInitialized) { Exception("Flare: CleverTapAPI not initialized") }
-        cleverTap.pushEvent(eventName, eventMap)
+        require(::firebaseAnalytics.isInitialized) { Exception("Flare: FirebaseAnalytics not initialized") }
+        firebaseAnalytics.logEvent(eventName,
+            BundleJSONConverter.convertToBundle(JSONObject(eventMap))
+        )
     }
 }
