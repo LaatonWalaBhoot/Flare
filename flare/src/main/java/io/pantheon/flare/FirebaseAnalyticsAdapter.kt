@@ -26,8 +26,8 @@ class FirebaseAnalyticsAdapter : AnalyticsAdapter<FirebaseAnalytics>() {
     override fun initialize(block: FirebaseAnalytics?.() -> Unit): AnalyticsAdapter<FirebaseAnalytics> {
         FlareProvider.flareContext?.let { context: Context ->
             firebaseAnalytics = FirebaseAnalytics.getInstance(context)
+            block(firebaseAnalytics)
         }
-        block(firebaseAnalytics)
         return this
     }
 
