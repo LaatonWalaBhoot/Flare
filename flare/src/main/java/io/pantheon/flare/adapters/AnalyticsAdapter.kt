@@ -18,13 +18,30 @@ package io.pantheon.flare.adapters
 import android.content.Context
 import io.pantheon.flare.FlareContextProvider
 
-abstract class AnalyticsAdapter<T> {
 
+abstract class AnalyticsAdapter<T> {
+    private var initialized = false
+    private var analyticsClient: T? = null
     internal lateinit var context: Context
     init {
         FlareContextProvider.flareContext?.let { context = it }
     }
-    abstract fun initialize(block: T?.() -> Unit): AnalyticsAdapter<T>
+    fun initialize(block: T?.() -> Unit): AnalyticsAdapter<T> {
+        if (!initialized) {
+            analyticsClient = initClient()
+            initialized = true
+        }
+        block(analyticsClient)
+        return this
+    }
 
-    abstract fun logEvent(eventName: String, eventMap: HashMap<String?, Any?>)
+    abstract fun initClient(): T?
+
+    fun logEvent(eventName: String, eventMap: HashMap<String?, Any?>) {
+        val client = analyticsClient ?: throw Exception("Flare: Analytics client not initialized")
+        logEventImpl(eventName, eventMap, client)
+    }
+
+    protected abstract fun logEventImpl(eventName: String, eventMap: HashMap<String?, Any?>, client: T)
 }
+

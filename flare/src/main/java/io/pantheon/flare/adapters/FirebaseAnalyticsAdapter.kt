@@ -21,18 +21,11 @@ import org.json.JSONObject
 
 class FirebaseAnalyticsAdapter : AnalyticsAdapter<FirebaseAnalytics>() {
 
-    private lateinit var firebaseAnalytics: FirebaseAnalytics
-
-    override fun initialize(block: FirebaseAnalytics?.() -> Unit): AnalyticsAdapter<FirebaseAnalytics> {
-        firebaseAnalytics = FirebaseAnalytics.getInstance(context)
-        block(firebaseAnalytics)
-        return this
+    override fun initClient(): FirebaseAnalytics {
+        return FirebaseAnalytics.getInstance(context)
     }
 
-    override fun logEvent(eventName: String, eventMap: HashMap<String?, Any?>) {
-        require(::firebaseAnalytics.isInitialized) { Exception("Flare: FirebaseAnalytics not initialized") }
-        firebaseAnalytics.logEvent(eventName,
-            BundleJSONConverter.convertToBundle(JSONObject(eventMap))
-        )
+    override fun logEventImpl(eventName: String, eventMap: HashMap<String?, Any?>, client: FirebaseAnalytics) {
+        client.logEvent(eventName, BundleJSONConverter.convertToBundle(JSONObject(eventMap)))
     }
 }

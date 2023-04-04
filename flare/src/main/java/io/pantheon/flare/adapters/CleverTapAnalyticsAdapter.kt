@@ -19,16 +19,11 @@ import com.clevertap.android.sdk.CleverTapAPI
 
 class CleverTapAnalyticsAdapter : AnalyticsAdapter<CleverTapAPI>() {
 
-    private lateinit var cleverTap: CleverTapAPI
-
-    override fun initialize(block: CleverTapAPI?.() -> Unit): AnalyticsAdapter<CleverTapAPI> {
-        CleverTapAPI.getDefaultInstance(context).apply { this?.let { cleverTapAPI: CleverTapAPI -> cleverTap = cleverTapAPI } }
-        block(cleverTap)
-        return this
+    override fun initClient(): CleverTapAPI? {
+        return CleverTapAPI.getDefaultInstance(context)
     }
 
-    override fun logEvent(eventName: String, eventMap: HashMap<String?, Any?>) {
-        require(::cleverTap.isInitialized) { Exception("Flare: CleverTapAPI not initialized") }
-        cleverTap.pushEvent(eventName, eventMap)
+    override fun logEventImpl(eventName: String, eventMap: HashMap<String?, Any?>, client: CleverTapAPI) {
+        client.pushEvent(eventName, eventMap)
     }
 }

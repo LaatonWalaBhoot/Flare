@@ -21,16 +21,11 @@ import org.json.JSONObject
 
 class AmplitudeAnalyticsAdapter : AnalyticsAdapter<AmplitudeClient>() {
 
-    private lateinit var amplitudeClient: AmplitudeClient
-
-    override fun initialize(block: AmplitudeClient?.() -> Unit): AnalyticsAdapter<AmplitudeClient> {
-        Amplitude.getInstance().initialize(context, /* todo:API_KEY */ null, /* todo:USER-ID */null).apply { this?.let { client: AmplitudeClient -> amplitudeClient = client } }
-        block(amplitudeClient)
-        return this
+    override fun initClient(): AmplitudeClient {
+        return Amplitude.getInstance().initialize(context, /* todo:API_KEY */ null, /* todo:USER-ID */null)
     }
 
-    override fun logEvent(eventName: String, eventMap: HashMap<String?, Any?>) {
-        require(::amplitudeClient.isInitialized) { Exception("Flare: AmplitudeClient not initialized") }
-        amplitudeClient.logEvent(eventName, JSONObject(eventMap))
+    override fun logEventImpl(eventName: String, eventMap: HashMap<String?, Any?>, client: AmplitudeClient) {
+        client.logEvent(eventName, JSONObject(eventMap))
     }
 }
