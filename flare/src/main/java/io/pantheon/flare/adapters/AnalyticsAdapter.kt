@@ -20,17 +20,16 @@ import io.pantheon.flare.FlareContextProvider
 
 
 abstract class AnalyticsAdapter<T> {
-    private var initialized = false
+
     private var analyticsClient: T? = null
     internal lateinit var context: Context
+
     init {
-        FlareContextProvider.flareContext?.let { context = it }
+        FlareContextProvider.flareContext?.let { context = it } ?: run { throw Exception("Flare: Context is NULL, It should not be null") }
     }
+
     fun initialize(block: T?.() -> Unit): AnalyticsAdapter<T> {
-        if (!initialized) {
-            analyticsClient = initClient()
-            initialized = true
-        }
+        analyticsClient = analyticsClient ?: initClient()
         block(analyticsClient)
         return this
     }
