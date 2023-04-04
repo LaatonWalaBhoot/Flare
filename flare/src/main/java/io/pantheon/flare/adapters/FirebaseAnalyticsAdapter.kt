@@ -13,23 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.pantheon.flare
+package io.pantheon.flare.adapters
 
-import com.amplitude.api.Amplitude
-import com.amplitude.api.AmplitudeClient
+import com.google.firebase.analytics.FirebaseAnalytics
+import io.pantheon.flare.BundleJSONConverter
 import org.json.JSONObject
 
-class AmplitudeAnalyticsAdapter : AnalyticsAdapter<AmplitudeClient>() {
+class FirebaseAnalyticsAdapter : AnalyticsAdapter<FirebaseAnalytics>() {
 
-    override fun initialize(block: AmplitudeClient?.() -> Unit): AnalyticsAdapter<AmplitudeClient> {
-        block(
-            Amplitude.getInstance()
-                .initialize(null, null, null),
-        )
-        return this
+    override fun initClient(): FirebaseAnalytics {
+        return FirebaseAnalytics.getInstance(context)
     }
 
-    override fun logEvent(eventName: String, eventMap: HashMap<String?, Any?>) {
-        Amplitude.getInstance().logEvent(eventName, JSONObject(eventMap))
+    override fun logEventImpl(eventName: String, eventMap: HashMap<String?, Any?>, client: FirebaseAnalytics) {
+        client.logEvent(eventName, BundleJSONConverter.convertToBundle(JSONObject(eventMap)))
     }
 }

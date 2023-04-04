@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.pantheon.flare
+package io.pantheon.flare.adapters
 
 import com.clevertap.android.sdk.CleverTapAPI
 
 class CleverTapAnalyticsAdapter : AnalyticsAdapter<CleverTapAPI>() {
 
-    override fun initialize(block: CleverTapAPI?.() -> Unit): AnalyticsAdapter<CleverTapAPI> {
-        block(CleverTapAPI.getDefaultInstance(null))
-        return this
+    override fun initClient(): CleverTapAPI? {
+        return CleverTapAPI.getDefaultInstance(context)
     }
 
-    override fun logEvent(eventName: String, eventMap: HashMap<String?, Any?>) {
-        CleverTapAPI.getDefaultInstance(null)?.pushEvent(eventName, eventMap)
+    override fun logEventImpl(eventName: String, eventMap: HashMap<String?, Any?>, client: CleverTapAPI) {
+        client.pushEvent(eventName, eventMap)
     }
 }

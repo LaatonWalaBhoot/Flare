@@ -13,11 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.pantheon.flare
+package io.pantheon.flare.adapters
 
-abstract class AnalyticsAdapter<T> {
+import com.amplitude.api.Amplitude
+import com.amplitude.api.AmplitudeClient
+import org.json.JSONObject
 
-    abstract fun initialize(block: T?.() -> Unit): AnalyticsAdapter<T>
+class AmplitudeAnalyticsAdapter : AnalyticsAdapter<AmplitudeClient>() {
 
-    abstract fun logEvent(eventName: String, eventMap: HashMap<String?, Any?>)
+    override fun initClient(): AmplitudeClient {
+        return Amplitude.getInstance().initialize(context, /* todo:API_KEY */ null, /* todo:USER-ID */null)
+    }
+
+    override fun logEventImpl(eventName: String, eventMap: HashMap<String?, Any?>, client: AmplitudeClient) {
+        client.logEvent(eventName, JSONObject(eventMap))
+    }
 }
