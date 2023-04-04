@@ -16,11 +16,14 @@
 package io.pantheon.flare.adapters
 
 import android.content.Context
-import io.pantheon.flare.FlareProvider
+import io.pantheon.flare.FlareContextProvider
 
 abstract class AnalyticsAdapter<T> {
 
-    internal var context: Context? = FlareProvider.flareContext
+    internal lateinit var context: Context
+    init {
+        FlareContextProvider.flareContext?.let { context = it }
+    }
     abstract fun initialize(block: T?.() -> Unit): AnalyticsAdapter<T>
 
     abstract fun logEvent(eventName: String, eventMap: HashMap<String?, Any?>)

@@ -15,7 +15,6 @@
  */
 package io.pantheon.flare.adapters
 
-import android.content.Context
 import com.amplitude.api.Amplitude
 import com.amplitude.api.AmplitudeClient
 import org.json.JSONObject
@@ -25,10 +24,8 @@ class AmplitudeAnalyticsAdapter : AnalyticsAdapter<AmplitudeClient>() {
     private lateinit var amplitudeClient: AmplitudeClient
 
     override fun initialize(block: AmplitudeClient?.() -> Unit): AnalyticsAdapter<AmplitudeClient> {
-        context?.let { context: Context ->
-            Amplitude.getInstance().initialize(context, /* todo:API_KEY */ null, /* todo:USER-ID */null).apply { this?.let { client: AmplitudeClient -> amplitudeClient = client } }
-            block(amplitudeClient)
-        }
+        Amplitude.getInstance().initialize(context, /* todo:API_KEY */ null, /* todo:USER-ID */null).apply { this?.let { client: AmplitudeClient -> amplitudeClient = client } }
+        block(amplitudeClient)
         return this
     }
 

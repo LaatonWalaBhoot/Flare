@@ -8,8 +8,8 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <application>
         <provider
-            android:authorities="io.pantheon.flare.FlareProvider"
-            android:name=".FlareProvider"
+            android:authorities="io.pantheon.flare.FlareContextProvider"
+            android:name=".FlareContextProvider"
             android:exported="false" />
     </application>
 </manifest>

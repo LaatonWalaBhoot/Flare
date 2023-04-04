@@ -9,7 +9,7 @@ import android.net.Uri
 import androidx.annotation.RestrictTo
 
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-class FlareProvider : ContentProvider() {
+class FlareContextProvider : ContentProvider() {
 
     companion object{
         @SuppressLint("StaticFieldLeak")
