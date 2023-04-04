@@ -15,7 +15,6 @@
  */
 package io.pantheon.flare
 
-import io.pantheon.flare.adapters.AnalyticsAdapter
 import AnalyticsPayload
 
 class Flare {
