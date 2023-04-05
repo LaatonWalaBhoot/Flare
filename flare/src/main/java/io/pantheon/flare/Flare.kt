@@ -37,10 +37,14 @@ class Flare {
         private val ADAPTERS = mutableListOf<AnalyticsAdapter<*>>()
         private val PROPERTIES = mutableListOf<String>()
 
-        fun trackAll(block: AnalyticsPayload.() -> Unit) {
+        fun trackAll(block: AnalyticsPayload.() -> Unit, adaptersList: List<AnalyticsAdapter<*>> = emptyList()) {
             AnalyticsPayload()
                 .apply(block)
-                .also { ADAPTERS.forEach { it.logEvent("", ) } }
+                .also {
+                    adaptersList.ifEmpty { ADAPTERS }.forEach {
+                        it.logEvent("", hashMapOf())
+                    }
+                }
         }
     }
 }
